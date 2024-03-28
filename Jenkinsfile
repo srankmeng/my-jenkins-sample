@@ -22,7 +22,8 @@ pipeline {
         }
         stage('Build images') {
             steps {
-                sh 'docker -v'
+                sh 'docker build -f ./json-server/Dockerfile -t json-server:0.1.0 ./json-server'
+                sh 'docker images'
             }
         }
     }
