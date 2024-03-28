@@ -35,30 +35,13 @@ pipeline {
                 }        
             }
         }
-        // stage('Trigger deploy') {
-        //     steps {
-        //         // script {
-        //         //     IMAGE_TAG = '$BUILD_NUMBER'
-        //         //  }
-        //         //  sh "echo ${IMAGE_TAG}"
-        //         // build job: 'demo_deploy_pipeline', parameters: [string(name: 'IMAGE_TAG', value: '${IMAGE_TAG}')]    
-        //         build job: 'demo_deploy_pipeline'
-        //     }
-        // }
     }
     post {
         success {
-            // script {
-            //     BUILD_NUM = '$BUILD_NUMBER'
-            //     build job: 'demo_deploy_pipeline', parameters: [string(name: 'IMAGE_TAG', value: '${BUILD_NUM}')]
-            // }
-            // sh "echo ${BUILD_NUM}"
             script {
                 def currentBuildNumber = env.BUILD_NUMBER
                 build job: 'demo_deploy_pipeline', parameters: [string(name: 'IMAGE_TAG', value: "${currentBuildNumber}")]
             }
-            
-            
         }
     }
 }
