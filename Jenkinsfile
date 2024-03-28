@@ -1,7 +1,4 @@
 pipeline {
-    // environment {
-    //     BUILD_NUM = ''
-    // }
     agent any
 
     stages {
@@ -25,11 +22,6 @@ pipeline {
         }
         stage('Build images') {
             steps {
-                // script {
-                //     BUILD_NUM = '$BUILD_NUMBER'
-                //     echo BUILD_NUM
-                // }
-                
                 sh 'docker build -f ./json-server/Dockerfile -t json-server:0.1.0 ./json-server'
                 sh 'docker tag json-server:0.1.0 srank123/json-server:$BUILD_NUMBER'
             }
@@ -56,11 +48,17 @@ pipeline {
     }
     post {
         success {
+            // script {
+            //     BUILD_NUM = '$BUILD_NUMBER'
+            //     build job: 'demo_deploy_pipeline', parameters: [string(name: 'IMAGE_TAG', value: '${BUILD_NUM}')]
+            // }
+            // sh "echo ${BUILD_NUM}"
             script {
-                      BUILD_NUM = '$BUILD_NUMBER'
-                 }
-                 sh "echo ${BUILD_NUM}"
-            build job: 'demo_deploy_pipeline', parameters: [string(name: 'IMAGE_TAG', value: '${BUILD_NUM}')]
+                def currentBuildNumber = env.BUILD_NUMBER
+                build job: 'demo_deploy_pipeline', parameters: [string(name: 'IMAGE_TAG', value: "${currentBuildNumber}")]
+            }
+            
+            
         }
     }
 }

@@ -7,7 +7,6 @@ pipeline {
     stages {
         stage('Deploy application') {
             steps {
-                echo '${IMAGE_TAG}'
                 sh 'docker rm -f json-server || true'
                 sh 'docker run -p 3000:3000 --name json-server -d srank123/json-server:${IMAGE_TAG}'       
             }
