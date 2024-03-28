@@ -43,8 +43,8 @@ pipeline {
         // }
     }
     post {
-        always {
-            echo 'pipeline done'
+        success {
+            build 'demo_deploy_pipeline'
         }
     }
 }
