@@ -37,7 +37,8 @@ pipeline {
         }
         stage('Deploy application') {
             steps {
-                 sh 'docker run -p 3000:3000 -d srank123/json-server:$BUILD_NUMBER'       
+                sh 'docker rm -f json-server || true'
+                sh 'docker run -p 3000:3000 --name json-server -d srank123/json-server:$BUILD_NUMBER'       
             }
         }
     }
