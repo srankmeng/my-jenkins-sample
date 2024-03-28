@@ -1,18 +1,15 @@
 pipeline {
     agent any
-    // parameters {
-    //     string(name: 'IMAGE_TAG', defaultValue: '', description: 'docker image tag version')
-    // }
+    parameters {
+        string(name: 'IMAGE_TAG', defaultValue: '', description: 'docker image tag version')
+    }
 
     stages {
         stage('Deploy application') {
             steps {
-                script {
-                      buildNumber = Jenkins.instance.getItem('demo_pipeline').lastSuccessfulBuild.number
-                 }
-                echo '${buildNumber}'
+                echo '${IMAGE_TAG}'
                 sh 'docker rm -f json-server || true'
-                sh 'docker run -p 3000:3000 --name json-server -d srank123/json-server:${buildNumber}'       
+                sh 'docker run -p 3000:3000 --name json-server -d srank123/json-server:${IMAGE_TAG}'       
             }
         }
     }

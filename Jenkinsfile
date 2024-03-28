@@ -1,6 +1,6 @@
 pipeline {
     // environment {
-    //     IMAGE_TAG = ${BUILD_NUMBER}
+    //     BUILD_NUM = ''
     // }
     agent any
 
@@ -25,6 +25,11 @@ pipeline {
         }
         stage('Build images') {
             steps {
+                // script {
+                //     BUILD_NUM = '$BUILD_NUMBER'
+                //     echo BUILD_NUM
+                // }
+                
                 sh 'docker build -f ./json-server/Dockerfile -t json-server:0.1.0 ./json-server'
                 sh 'docker tag json-server:0.1.0 srank123/json-server:$BUILD_NUMBER'
             }
@@ -38,20 +43,24 @@ pipeline {
                 }        
             }
         }
-        stage('Trigger deploy') {
-            steps {
-                // script {
-                //     IMAGE_TAG = '$BUILD_NUMBER'
-                //  }
-                //  sh "echo ${IMAGE_TAG}"
-                // build job: 'demo_deploy_pipeline', parameters: [string(name: 'IMAGE_TAG', value: '${IMAGE_TAG}')]    
-                build job: 'demo_deploy_pipeline'
-            }
+        // stage('Trigger deploy') {
+        //     steps {
+        //         // script {
+        //         //     IMAGE_TAG = '$BUILD_NUMBER'
+        //         //  }
+        //         //  sh "echo ${IMAGE_TAG}"
+        //         // build job: 'demo_deploy_pipeline', parameters: [string(name: 'IMAGE_TAG', value: '${IMAGE_TAG}')]    
+        //         build job: 'demo_deploy_pipeline'
+        //     }
+        // }
+    }
+    post {
+        success {
+            script {
+                      BUILD_NUM = '$BUILD_NUMBER'
+                 }
+                 sh "echo ${BUILD_NUM}"
+            build job: 'demo_deploy_pipeline', parameters: [string(name: 'IMAGE_TAG', value: '${BUILD_NUM}')]
         }
     }
-    // post {
-    //     success {
-    //         build job: 'demo_deploy_pipeline', parameters: [string(name: 'IMAGE_TAG', value: '${IMAGE_TAG}')]
-    //     }
-    // }
 }
