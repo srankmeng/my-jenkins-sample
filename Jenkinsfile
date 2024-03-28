@@ -2,13 +2,28 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        // stage('Checkout') {
+        //     steps {
+        //         checkout scm
+        //     }
+        //     steps {
+        //       git branch: 'main', url: 'https://github.com/srankmeng/my-jenkins-sample.git'
+        //     }
+        // }
+        stage('Code analytic') {
             steps {
-                checkout scm
+                echo 'Code analytic'
             }
-            // steps {
-            //   git branch: 'main', url: 'https://github.com/srankmeng/my-jenkins-sample.git'
-            // }
+        }
+        stage('Unit test') {
+            steps {
+                echo 'Unit test'
+            }
+        }
+        stage('Build images') {
+            steps {
+                sh 'docker -v'
+            }
         }
     }
     post {
