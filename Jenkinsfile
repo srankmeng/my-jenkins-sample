@@ -38,7 +38,7 @@ pipeline {
     }
     post {
         success {
-            build 'demo_deploy_pipeline'
+            build job: 'demo_deploy_pipeline', parameters: [string(name: 'IMAGE_TAG', value: '$BUILD_NUMBER')]
         }
     }
 }
