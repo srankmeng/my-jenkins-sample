@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Code analytic') {
+            steps {
+                echo 'Code analytic'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'deploy done'
+        }
+    }
+}
