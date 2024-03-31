@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:18.20.0-alpine
 
 WORKDIR /app
 RUN npm install -g json-server
