@@ -44,7 +44,12 @@ pipeline {
         stage('Run api automate test') {
             steps {
                 sh 'docker build -f ./newman/Dockerfile -t srank123/newman:0.1.0 ./newman'
-                sh 'docker run srank123/newman:0.1.0'
+                sh '''
+                    docker run --add-host=host.docker.internal:host-gateway srank123/newman:0.1.0 \
+                    run demo.postman_collection.json -e environment.postman_environment.json \
+                    -r cli,htmlextra --reporter-htmlextra-export reports/report.html \
+                    --env-var "HOST=host.docker.internal:3000"
+                '''
             }
             // steps {
             //     sh 'docker compose up newman'
@@ -63,7 +68,7 @@ pipeline {
     }
     post {
         always {
-            sh 'docker rm -f json-server'
+            sh 'docker rm -f json-server || true'
             // sh 'docker compose down'
         }
         success {
