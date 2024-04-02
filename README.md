@@ -1,8 +1,8 @@
 # My jenkins sample
 
-## Install jenkins with Dockerfile
+![Pipeline flow](pipeline-flow.png)
 
-### CI pipeline
+## Install jenkins with Dockerfile
 
 Build docker image name: `jenkins-dind`
 
@@ -45,6 +45,8 @@ Click `Add credential` button
 
 ## Create & Setup pipelines
 
+### CI Pipeline
+
 On first page click `+ New Item` menu
 
 Enter pipeline name
@@ -52,6 +54,8 @@ Enter pipeline name
 Click Pipeline option and submit 
 
 then input code to pipeline script
+
+> replace xxxxx with your docker hub account
 
 ```
 pipeline {
@@ -80,19 +84,19 @@ pipeline {
         }
         stage('Build images') {
             steps {
-                sh 'docker build -f ./json-server/Dockerfile -t srank123/json-server:0.1.0 ./json-server'
+                sh 'docker build -f ./json-server/Dockerfile -t xxxxx/json-server:0.1.0 ./json-server'
             }
         }
         stage('Setup & Provisioning') {
             steps {
-                sh 'docker run -p 3000:3000 --name json-server -d srank123/json-server:0.1.0'
+                sh 'docker run -p 3000:3000 --name json-server -d xxxxx/json-server:0.1.0'
             }
         }
         stage('Run api automate test') {
             steps {
-                sh 'docker build -f ./newman/Dockerfile -t srank123/newman:0.1.0 ./newman'
+                sh 'docker build -f ./newman/Dockerfile -t xxxxx/newman:0.1.0 ./newman'
                 sh '''
-                    docker run --add-host=host.docker.internal:host-gateway srank123/newman:0.1.0 \
+                    docker run --add-host=host.docker.internal:host-gateway xxxxx/newman:0.1.0 \
                     run demo.postman_collection.json -e environment.postman_environment.json \
                     -r cli,htmlextra --reporter-htmlextra-export reports/report.html \
                     --env-var "HOST=host.docker.internal:3000"
@@ -108,7 +112,6 @@ pipeline {
 }
 
 ```
-
 
 
 ### Push to registry after CI success
@@ -136,11 +139,13 @@ Go to docker hub to check images
 
 Add 'Deploy application' stage after `stage('Push Docker Image to Docker Hub')`
 
+>replace `xxxxx` with your docker hub account
+
 ```
 stage('Deploy application') {
     steps {
         sh 'docker rm -f json-server-dev || true'
-        sh 'docker run -p 3001:3000 --name json-server-dev -d srank123/json-server:$BUILD_NUMBER'       
+        sh 'docker run -p 3001:3000 --name json-server-dev -d xxxxx/json-server:$BUILD_NUMBER'       
     }
 }
 ```
@@ -148,6 +153,7 @@ Go to `http://localhost:3001/`
 
 ### Separate CD from CI pipelines
 Create the new pipeline name: `demo_deploy_pipeline` then input code to pipeline script
+>replace `xxxxx` with your docker hub account
 ```
 pipeline {
     agent any
@@ -159,7 +165,7 @@ pipeline {
         stage('Deploy application') {
             steps {
                 sh 'docker rm -f json-server-dev || true'
-                sh 'docker run -p 3001:3000 --name json-server-dev -d srank123/json-server:${IMAGE_TAG}'       
+                sh 'docker run -p 3001:3000 --name json-server-dev -d xxxxx/json-server:${IMAGE_TAG}'       
             }
         }
     }
@@ -194,7 +200,9 @@ Back to the first pipeline:
 Go to the first pipeline: Configure > Build Triggers > Poll SCM > input `* * * * *`
 
 
-### Blue Ocean
+## Blue Ocean
+
+Manage Jenkins > Plugins > Available plugins > search `blue ocean` > checked and install
 
 
 
